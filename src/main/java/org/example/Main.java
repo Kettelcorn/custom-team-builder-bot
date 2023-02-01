@@ -16,7 +16,7 @@ import java.util.*;
 public class Main{
     public static void main(String[] args) throws Exception {
          JDA jda = JDABuilder
-                .createDefault("MTA2NjUxNTM4NTI2MTc3MjgwMA.GOwIVn.vV5fSZUGLWN2flcwnj_z9UvsHAdd08hKTlTCCo").enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                .createDefault("MTA2NjUxNTM4NTI2MTc3MjgwMA.GuXdWg.f7LIoTPWEwiKdcPO09Fak72OTUxPkFlyxIwsGs").enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .build();
         jda.addEventListener(new MyListener());
 
