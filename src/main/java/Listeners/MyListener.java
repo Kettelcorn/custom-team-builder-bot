@@ -15,10 +15,12 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.Interaction;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
@@ -37,7 +39,7 @@ import java.util.*;
 public class MyListener extends ListenerAdapter {
     private List<String> members;
     private List<Member> channelPeople;
-
+    private SlashCommandInteractionEvent events;
     private int players;
 
     private StringSelectInteractionEvent event;
@@ -62,18 +64,17 @@ public class MyListener extends ListenerAdapter {
     // when the user types a slash command
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        channelPeople = event.getMember().getVoiceState().getChannel().getMembers().stream().toList();
-        if (event.getName().equals("aram-builder")) {
-            event.reply("Pick game size").setEphemeral(true)
-                    .addActionRow(
-                            StringSelectMenu.create("chose-game-size")
-                                    .addOption("1 vs 1", "1 vs 1")
-                                    .addOption("2 vs 2", "2 vs 2")
-                                    .addOption("3 vs 3", "3 vs 3")
-                                    .addOption("4 vs 4", "4 vs 4")
-                                    .addOption("5 vs 5", "5 vs 5")
-                                    .build())
-                    .queue();
+        if (!event.getMember().getVoiceState().inAudioChannel()) {
+            event.reply("You must be in a voice channel to use this bot").setEphemeral(true).queue();
+        } else {
+            events = event;
+            channelPeople = event.getMember().getVoiceState().getChannel().getMembers().stream().toList();
+            if (channelPeople.size() < 4) {
+                event.reply("Not enough people in voice channel to make game").setEphemeral(true).queue();
+            }
+            if (event.getName().equals("custom-builder")) {
+                selectGameSize("Select the game size");
+            }
         }
     }
 
@@ -84,9 +85,6 @@ public class MyListener extends ListenerAdapter {
         // if user choose team size
         if (event.getComponentId().equals("chose-game-size")) {
             switch (event.getValues().get(0)) {
-                case "1 vs 1":
-                    players = 2;
-                    break;
                 case "2 vs 2":
                     players = 4;
                     break;
@@ -100,12 +98,14 @@ public class MyListener extends ListenerAdapter {
                     players = 10;
                     break;
             }
-            System.out.print(players);
-            selectName(event);
+            if (players > channelPeople.size()) {
+                event.reply("Invalid team size").setEphemeral(true).queue();
+            } else {
+                chooseOption(event);
+            }
         }
 
-        // if name was picked to remove
-        if (event.getComponentId().equals("lol")) {
+        if (event.getComponentId().equals("select-members")) {
             List<Member> newList = new ArrayList<Member>();
             for (Member person : channelPeople) {
                 if (!person.getUser().getName().equals(event.getValues().get(0))) {
@@ -113,34 +113,56 @@ public class MyListener extends ListenerAdapter {
                 }
             }
             channelPeople = newList;
-            System.out.println(channelPeople);
-            if (channelPeople.size() >= players) {
-                selectName(event);
-            } else {
-                Collections.shuffle(channelPeople);
-                String team1 = "";
-                String team2 = "";
-                for (int i = 0; i < channelPeople.size() / 2; i++) {
-                    team1 += channelPeople.get(i).getUser().getName() + " ";
-                    team2 += channelPeople.get(channelPeople.size() - 1 - i).getUser().getName() + " ";
+            chooseOption(event);
+        }
 
-                }
-                MessageChannel channel = event.getChannel();
-                channel.sendMessage("Team 1: " + team1).queue();
-                channel.sendMessage("Team 2: " + team2).queue();
-                event.reply("Setting teams").setEphemeral(true).queue();
-            }
+
+    }
+
+    public void chooseOption(StringSelectInteractionEvent event) {
+        if (channelPeople.size() > players) {
+            selectName(event);
+        } else {
+            createTeams();
         }
     }
 
+    public void selectGameSize(String message) {
+        events.reply(message).setEphemeral(true)
+                .addActionRow(
+                        StringSelectMenu.create("chose-game-size")
+                                .addOption("2 vs 2", "2 vs 2")
+                                .addOption("3 vs 3", "3 vs 3")
+                                .addOption("4 vs 4", "4 vs 4")
+                                .addOption("5 vs 5", "5 vs 5")
+                                .build())
+                .queue();
+    }
     // creates a drop-down menu with dynamic options based on who is in the voice channel
     // or who has been excluded by the user
     public void selectName(StringSelectInteractionEvent event) {
-        StringSelectMenu.Builder builder = StringSelectMenu.create("lol");
+        StringSelectMenu.Builder builder = StringSelectMenu.create("select-members");
         for (Member loser : channelPeople) {
             builder.addOption(loser.getUser().getName(), loser.getUser().getName());
         }
+
         event.reply("Chose who is not playing").setEphemeral(true).addActionRow(builder.build()).queue();
+    }
+
+    public void createTeams() {
+        List<Member> temp = new ArrayList<>(channelPeople);
+        Collections.shuffle(temp);
+        String team1 = "";
+        String team2 = "";
+        for (int i = 0; i < temp.size() / 2; i++) {
+            team1 += temp.get(i).getUser().getName() + "\t";
+            team2 += temp.get(temp.size() - 1 - i).getUser().getName() + "\t";
+
+        }
+        MessageChannel channel = event.getChannel();
+        event.reply("Setting teams").setEphemeral(true).queue();
+        channel.sendMessage("Team 1:\t" + team1).queue();
+        channel.sendMessage("Team 2:\t" + team2).queue();
     }
 }
 

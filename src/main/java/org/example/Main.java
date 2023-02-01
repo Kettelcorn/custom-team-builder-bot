@@ -20,6 +20,6 @@ public class Main{
                 .build();
         jda.addEventListener(new MyListener());
 
-        jda.upsertCommand("aram-builder", "creates ARAM team").setGuildOnly(true).queue();
+        jda.upsertCommand("custom-builder", "creates ARAM team").setGuildOnly(true).queue();
     }
 }
