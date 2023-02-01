@@ -68,7 +68,7 @@ public class MyListener extends ListenerAdapter {
             event.reply("You must be in a voice channel to use this bot").setEphemeral(true).queue();
         } else {
             events = event;
-            channelPeople = event.getMember().getVoiceState().getChannel().getMembers().stream().toList();
+            channelPeople = event.getMember().getVoiceState().getChannel().getMembers();
             if (channelPeople.size() < 4) {
                 event.reply("Not enough people in voice channel to make game").setEphemeral(true).queue();
             }
