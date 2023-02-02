@@ -1,1 +1,1 @@
-worker: java -jar target/learning-bot-1.0-SNAPSHOT.jar
+worker: java -jar out/artifacts/learning_bot_jar/learning-bot.jar
