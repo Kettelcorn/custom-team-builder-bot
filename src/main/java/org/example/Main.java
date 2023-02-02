@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 public class Main{
     public static void main(String[] args) throws Exception {
          JDA jda = JDABuilder
-                .createDefault("MTA2NjUxNTM4NTI2MTc3MjgwMA.GuXdWg.f7LIoTPWEwiKdcPO09Fak72OTUxPkFlyxIwsGs").enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                .createDefault(System.getenv("DISC_KEY")).enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .build();
         jda.addEventListener(new MyListener());
 
