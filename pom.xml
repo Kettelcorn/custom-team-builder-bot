@@ -11,8 +11,8 @@
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>15</maven.compiler.source>
-        <maven.compiler.target>15</maven.compiler.target>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -50,6 +50,7 @@
         </dependency>
     </dependencies>
 
+    <!--https://stackoverflow.com/questions/39273877/intellij-java-2016-maven-how-to-embed-dependencies-in-jar -->
     <build>
         <plugins>
             <plugin>
