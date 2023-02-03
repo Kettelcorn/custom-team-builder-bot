@@ -145,8 +145,7 @@ public class MyListener extends ListenerAdapter {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Custom teams").setColor(Color.CYAN);
         embedBuilder.setColor(Color.CYAN);
-        embedBuilder.addField("Team 1", team1, false);
-        embedBuilder.addBlankField(false);
+        embedBuilder.addField("Team 1", team1 + "\n", false);
         embedBuilder.addField("Team 2:", team2, true);
         event.replyEmbeds(embedBuilder.build()).queue();
     }
