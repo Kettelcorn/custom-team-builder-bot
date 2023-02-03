@@ -140,7 +140,8 @@ public class MyListener extends ListenerAdapter {
             team2 += temp.get(temp.size() - 1 - i).getUser().getName() + "\t";
 
         }
-        
+
+        //embeds message
         MessageChannel channel = event.getChannel();
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Custom teams");
