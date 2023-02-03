@@ -142,17 +142,13 @@ public class MyListener extends ListenerAdapter {
         }
 
         //embeds message
-        MessageChannel channel = event.getChannel();
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Custom teams").setColor(Color.CYAN);
         embedBuilder.setColor(Color.CYAN);
-        embedBuilder.setDescription("Text");
         embedBuilder.addField("Team 1", team1, false);
-        embedBuilder.addBlankField(true);
+        embedBuilder.addBlankField(false);
         embedBuilder.addField("Team 2:", team2, true);
-        Date date = new Date();
-        embedBuilder.setFooter(date.getTime() + "");
-        channel.sendMessageEmbeds(embedBuilder.build()).queue();
+        event.replyEmbeds(embedBuilder.build()).queue();
     }
 }
 
