@@ -132,6 +132,7 @@ public class MyListener extends ListenerAdapter {
     
     // takes list of people, randomizes order, and sends message to discord displaying results
     public void createTeams() {
+        event.reply("Setting up teams").setEphemeral(true).queue();
         List<Member> temp = new ArrayList<>(channelPeople);
         Collections.shuffle(temp);
         String team1 = "";
@@ -150,7 +151,6 @@ public class MyListener extends ListenerAdapter {
         embedBuilder.addField("__Team 2:__", team2, true);
         embedBuilder.setFooter("Request made by " + event.getMember().getUser().getName(),
                 event.getMember().getUser().getAvatarUrl());
-        event.reply("Setting up teams").setEphemeral(true).queue();
         event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
     }
 }
