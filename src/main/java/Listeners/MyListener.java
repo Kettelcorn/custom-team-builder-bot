@@ -28,27 +28,19 @@ public class MyListener extends ListenerAdapter {
         players = 0;
         channelPeople = new ArrayList<>();
     }
-    @Override
-    public void onMessageReceived(MessageReceivedEvent event){
-        if (event.getAuthor().isBot()) {
-            return;
-        }
-        Message message = event.getMessage();
-        String content = message.getContentRaw();
-        if (content.equals("!aram")) {
-            MessageChannel channel = event.getChannel();
-            channel.sendMessage("Pong!").queue();
-        }
-    }
-
+  
     // when the user types a slash command
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        
+        // checks if user is in an audio channel
         if (!event.getMember().getVoiceState().inAudioChannel()) {
             event.reply("You must be in a voice channel to use this bot").setEphemeral(true).queue();
         } else {
             events = event;
             channelPeople = event.getMember().getVoiceState().getChannel().getMembers();
+            
+            // checks if enough people to play a game
             if (channelPeople.size() < 4) {
                 event.reply("Not enough people in voice channel to make game").setEphemeral(true).queue();
             }
@@ -58,10 +50,12 @@ public class MyListener extends ListenerAdapter {
         }
     }
 
+    
     // when user selects a string option on a drop-down menu
     @Override
     public void onStringSelectInteraction(StringSelectInteractionEvent event) {
         this.event = event;
+        
         // if user choose team size
         if (event.getComponentId().equals("chose-game-size")) {
             switch (event.getValues().get(0)) {
@@ -84,7 +78,8 @@ public class MyListener extends ListenerAdapter {
                 chooseOption(event);
             }
         }
-
+        
+        // if user chooses a member to exclude
         if (event.getComponentId().equals("select-members")) {
             List<Member> newList = new ArrayList<Member>();
             for (Member person : channelPeople) {
@@ -95,10 +90,10 @@ public class MyListener extends ListenerAdapter {
             channelPeople = newList;
             chooseOption(event);
         }
-
-
     }
 
+    
+    // logic for choosing to either exclude player or build teams
     public void chooseOption(StringSelectInteractionEvent event) {
         if (channelPeople.size() > players) {
             selectName(event);
@@ -107,6 +102,8 @@ public class MyListener extends ListenerAdapter {
         }
     }
 
+    
+    // creates drop down menu of different game size options
     public void selectGameSize(String message) {
         events.reply(message).setEphemeral(true)
                 .addActionRow(
@@ -118,6 +115,8 @@ public class MyListener extends ListenerAdapter {
                                 .build())
                 .queue();
     }
+    
+    
     // creates a drop-down menu with dynamic options based on who is in the voice channel
     // or who has been excluded by the user
     public void selectName(StringSelectInteractionEvent event) {
@@ -129,6 +128,8 @@ public class MyListener extends ListenerAdapter {
         event.reply("Chose who is not playing").setEphemeral(true).addActionRow(builder.build()).queue();
     }
 
+    
+    // takes list of people, randomizes order, and sends message to discord displaying results
     public void createTeams() {
         List<Member> temp = new ArrayList<>(channelPeople);
         Collections.shuffle(temp);
@@ -139,10 +140,7 @@ public class MyListener extends ListenerAdapter {
             team2 += temp.get(temp.size() - 1 - i).getUser().getName() + "\t";
 
         }
-        /*MessageChannel channel = event.getChannel();
-        event.reply("Setting teams").setEphemeral(true).queue();
-        channel.sendMessage("Team 1:\t" + team1).queue();
-        channel.sendMessage("Team 2:\t" + team2).queue();*/
+        
         MessageChannel channel = event.getChannel();
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Custom teams");
@@ -153,26 +151,5 @@ public class MyListener extends ListenerAdapter {
         channel.sendMessageEmbeds(embedBuilder.build()).queue();
     }
 }
-
-   /* @Override
-    public void onEntitySelectInteraction(EntitySelectInteractionEvent event) {
-        if (players != 1) {
-            members.add(event.getMentions().getUsers().get(0).getName());
-            System.out.println(members);
-            event.reply("Chose person who is not playing")
-                    .addActionRow(
-                            EntitySelectMenu.create("choose-user", EntitySelectMenu.SelectTarget.USER)
-                                    .build()).setEphemeral(true)
-                    .queue();
-        } else {
-            Collections.shuffle(members);
-            String team1 = "";
-            String team2 = "";
-            for (int i = 0; i < members.size(); i++) {
-            }
-            MessageChannel channel = event.getChannel();
-            channel.sendMessage(team1).queue();
-        }
-    }*/
 
 
