@@ -150,7 +150,8 @@ public class MyListener extends ListenerAdapter {
         embedBuilder.addField("__Team 2:__", team2, true);
         embedBuilder.setFooter("Request made by " + event.getMember().getUser().getName(),
                 event.getMember().getUser().getAvatarUrl());
-        event.replyEmbeds(embedBuilder.build()).queue();
+        event.reply("Setting up teams").queue();
+        event.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
     }
 }
 
