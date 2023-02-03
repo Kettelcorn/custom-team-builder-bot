@@ -142,15 +142,14 @@ public class MyListener extends ListenerAdapter {
 
         }
 
-        //embeds message
+        //embeds message and sends result to discord message
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Custom teams").setColor(Color.CYAN);
+        embedBuilder.setTitle("Custom teams");
         embedBuilder.setColor(Color.CYAN);
         embedBuilder.addField("__Team 1:__", team1 + "\n\n", false);
         embedBuilder.addField("__Team 2:__", team2, true);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date date = new Date();
-        embedBuilder.setFooter("Request made @ " + formatter.format(date), event.getGuild().getIconUrl());
+        embedBuilder.setFooter("Request made by " + event.getMember().getUser().getName(),
+                event.getMember().getUser().getAvatarUrl());
         event.replyEmbeds(embedBuilder.build()).queue();
     }
 }
