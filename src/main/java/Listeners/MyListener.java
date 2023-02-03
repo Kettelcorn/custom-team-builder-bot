@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
@@ -145,8 +146,11 @@ public class MyListener extends ListenerAdapter {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Custom teams").setColor(Color.CYAN);
         embedBuilder.setColor(Color.CYAN);
-        embedBuilder.addField("Team 1", team1 + "\n", false);
-        embedBuilder.addField("Team 2:", team2, true);
+        embedBuilder.addField("__Team 1:__", team1 + "\n\n", false);
+        embedBuilder.addField("__Team 2:__", team2, true);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = new Date();
+        embedBuilder.setFooter("Request made @ " + formatter.format(date), event.getGuild().getIconUrl());
         event.replyEmbeds(embedBuilder.build()).queue();
     }
 }
