@@ -136,19 +136,22 @@ public class MyListener extends ListenerAdapter {
         String team1 = "";
         String team2 = "";
         for (int i = 0; i < temp.size() / 2; i++) {
-            team1 += temp.get(i).getUser().getName() + "\t";
-            team2 += temp.get(temp.size() - 1 - i).getUser().getName() + "\t";
+            team1 += temp.get(i).getUser().getName() + "\n";
+            team2 += temp.get(temp.size() - 1 - i).getUser().getName() + "\n";
 
         }
 
         //embeds message
         MessageChannel channel = event.getChannel();
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Custom teams");
+        embedBuilder.setTitle("Custom teams").setColor(Color.CYAN);
         embedBuilder.setColor(Color.CYAN);
         embedBuilder.setDescription("Text");
         embedBuilder.addField("Team 1", team1, false);
+        embedBuilder.addBlankField(true);
         embedBuilder.addField("Team 2:", team2, true);
+        Date date = new Date();
+        embedBuilder.setFooter(date.getTime() + "");
         channel.sendMessageEmbeds(embedBuilder.build()).queue();
     }
 }
