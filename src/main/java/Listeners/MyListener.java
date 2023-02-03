@@ -1,6 +1,7 @@
 package Listeners;
 
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -9,7 +10,10 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 
 public class MyListener extends ListenerAdapter {
@@ -135,10 +139,18 @@ public class MyListener extends ListenerAdapter {
             team2 += temp.get(temp.size() - 1 - i).getUser().getName() + "\t";
 
         }
-        MessageChannel channel = event.getChannel();
+        /*MessageChannel channel = event.getChannel();
         event.reply("Setting teams").setEphemeral(true).queue();
         channel.sendMessage("Team 1:\t" + team1).queue();
-        channel.sendMessage("Team 2:\t" + team2).queue();
+        channel.sendMessage("Team 2:\t" + team2).queue();*/
+        MessageChannel channel = event.getChannel();
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle("Custom teams");
+        embedBuilder.setColor(Color.CYAN);
+        embedBuilder.setDescription("Text");
+        embedBuilder.addField("Team 1", team1, false);
+        embedBuilder.addField("Team 2:", team2, true);
+        channel.sendMessageEmbeds(embedBuilder.build()).queue();
     }
 }
 
